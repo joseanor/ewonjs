@@ -1,6 +1,14 @@
 const axios = require('axios');
 const params = new URLSearchParams();
 
+var routes = {
+    login: 'login',
+    logout: 'logout',
+    accountInfo: 'getaccountinfo',
+    devices: 'getewons',
+    device: 'getewon'
+}
+
 /**
  * Construct a new EwonClient
  * 
@@ -38,7 +46,7 @@ EwonClient.prototype.login = function () {
         throw new Error("Login error; you cannot log in without first instantiating a client");
     }
 
-    request("login", this).then((response) => {
+    request(routes.login, this).then((response) => {
         return response.data.message;
     }).catch(err => {
         return err.response.data.message;
@@ -51,7 +59,7 @@ EwonClient.prototype.login = function () {
  * @returns {string} The Talk2M reply
  */
 EwonClient.prototype.logout = function () {
-    request("logout", this).then((response) => {
+    request(routes.logout, this).then((response) => {
         return response.data.message;
     }).catch((err) => {
         return err.response.adta.message;
@@ -64,7 +72,7 @@ EwonClient.prototype.logout = function () {
  * @returns {object} Talk2M account object
  */
 EwonClient.prototype.account = function () {
-    return request("getaccountinfo", this).then((response) => {
+    return request(routes.accountInfo, this).then((response) => {
         return response.data;
     }).catch((err) => {
         return err.response.adta.message;
@@ -77,7 +85,7 @@ EwonClient.prototype.account = function () {
  * @returns {array} Array of all devices 
  */
 EwonClient.prototype.getDevices = function () {
-    return request("getewons", this).then((response) => {
+    return request(routes.devices, this).then((response) => {
         return response.data;
     }).catch((err) => {
         return err;
@@ -91,7 +99,7 @@ EwonClient.prototype.getDevices = function () {
  * @returns {object} Requested device
  */
 EwonClient.prototype.getDevice = function (deviceName) {
-    return request("getewon", this, { name: deviceName }).then((response) => {
+    return request(routes.device, this, { name: deviceName }).then((response) => {
         return response.data;
     }).catch((err) => {
         return err;
