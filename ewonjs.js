@@ -72,6 +72,33 @@ EwonClient.prototype.account = function () {
 }
 
 /**
+ * Retrieve devices in Talk2M account
+ * 
+ * @returns {array} Array of all devices 
+ */
+EwonClient.prototype.getDevices = function () {
+    return request("getewons", this).then((response) => {
+        return response.data;
+    }).catch((err) => {
+        return err;
+    })
+}
+
+/**
+ * Retrieve a single device in Talk2M account
+ * 
+ * @param {string} deviceName - Name of requested device
+ * @returns {object} Requested device
+ */
+EwonClient.prototype.getDevice = function (deviceName) {
+    return request("getewon", this, { name: deviceName }).then((response) => {
+        return response.data;
+    }).catch((err) => {
+        return err;
+    })
+}
+
+/**
  * Update session Id, requires login
  * @param {string} sessionId - Talk2M session id 
  */
@@ -97,7 +124,7 @@ EwonClient.prototype.setState = function (stateful) {
     this.stateful = stateful;
 }
 
-var request = (path, client) => {
+var request = (path, client, options) => {
     params.append('t2mdeveloperid', client._developerId);
     if (!client.stateful) {
         params.append('t2maccount', client._account);
@@ -105,6 +132,10 @@ var request = (path, client) => {
         params.append('t2mpassword', client._password);
     } else {
         params.append('t2msession', client._sessionId);
+    }
+
+    for (var key in options) {
+        params.append(key, options[key])
     }
 
     return client._axios.post(path, params);
