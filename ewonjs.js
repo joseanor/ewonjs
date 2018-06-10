@@ -1,12 +1,22 @@
 const axios = require('axios');
 const params = new URLSearchParams();
+const csvtojsonV2 = require("csvtojson/v2");
 
 var routes = {
     login: 'login',
     logout: 'logout',
     accountInfo: 'getaccountinfo',
     devices: 'getewons',
-    device: 'getewon'
+    device: 'getewon',
+    get_ebd: 'get/ewon_name/rcgi.bin'
+}
+
+var forms = {
+    param_form: 'ParamForm'
+}
+
+var ebds = {
+    live_tags: "$dtIV$ftT"
 }
 
 /**
@@ -32,6 +42,15 @@ class EwonClient {
                 baseURL: 'https://m2web.talk2m.com/t2mapi'
             });
         }
+    }
+}
+
+class Ewon {
+    constructor(deviceName, client, username, password) {
+        this._name = deviceName,
+            this._client = client,
+            this._username = username,
+            this._password = password;
     }
 }
 
@@ -132,6 +151,44 @@ EwonClient.prototype.setState = function (stateful) {
     this.stateful = stateful;
 }
 
+/**
+ * Get the live tags from the current device
+ */
+Ewon.prototype.getLiveTags = function () {
+    return request(formatEbdRoute(forms.param_form, this._name), this._client, {
+        AST_Param: ebds.live_tags,
+        t2mdeviceusername: this._username,
+        t2mdevicepassword: this._password
+    }).then((response) => {
+        return tagToJson(response.data);
+    }).catch((err) => {
+        return err;
+    })
+}
+
+var formatEbdRoute = function (form, deviceName) {
+    var route = routes.get_ebd.replace('ewon_name', deviceName);
+    console.log(route + '/' + form)
+    return route + '/' + form;
+}
+
+var tagToJson = function (tagData) {
+    var tags = {};
+    var commaTag = tagData.split('\n').slice(1, tagData.split('\n').length - 1);
+    for (var i = 0; i < commaTag.length; i++) {
+        var tagEntry = commaTag[i].split(';');
+        tags[i] = {
+            tagid: tagEntry[0],
+            tagname: tagEntry[1],
+            tagvalue: tagEntry[2],
+            alarmStatus: tagEntry[3],
+            alarmType: tagEntry[4],
+            quality: tagEntry[5]
+        }
+    }
+    return tags;
+}
+
 var request = (path, client, options) => {
     params.append('t2mdeveloperid', client._developerId);
     if (!client.stateful) {
@@ -162,5 +219,6 @@ let validate = (entry, message) => {
 }
 
 module.exports = {
-    EwonClient
+    EwonClient,
+    Ewon
 }
