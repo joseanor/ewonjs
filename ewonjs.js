@@ -1,6 +1,5 @@
 const axios = require('axios');
 const params = new URLSearchParams();
-const csvtojsonV2 = require("csvtojson/v2");
 
 var routes = {
     login: 'login',
@@ -162,7 +161,7 @@ Ewon.prototype.getLiveTags = function () {
     }).then((response) => {
         return tagToJson(response.data);
     }).catch((err) => {
-        return err;
+        return err.response.data;
     })
 }
 
