@@ -15,7 +15,8 @@ var forms = {
 }
 
 var ebds = {
-    live_tags: "$dtIV$ftT"
+    live_tags: "$dtIV$ftT",
+    realative_historical: "$dtHT$ftT"
 }
 
 /**
@@ -165,18 +166,55 @@ Ewon.prototype.getLiveTags = function () {
     })
 }
 
+Ewon.prototype.relative_units = {
+    seconds: 's',
+    minutes: 'm',
+    hours: 'h',
+    days: 'd'
+}
+
+/**
+ * Retrieve historical data for all tags in a specific device
+ * 
+ * 
+ * @param {int} startTime 
+ * @param {string} startUnits 
+ * @param {int} endTime OPTIONAL
+ * @param {string} endUnits OPTIONAL
+ */
+Ewon.prototype.getHistoricalRelative = function (startTime, startUnits, endTime, endUnits) {
+    var ebd = ebds.realative_historical;
+    if (startTime && startUnits) {
+        ebd = ebd + "$st_" + startUnits + startTime;
+    }
+
+    if (endTime && endUnits) {
+        ebd = ebd + '$et_' + endUnits + endTime;
+    } else {
+        ebd = ebd + '$et_s0';
+    }
+    return request(formatEbdRoute(forms.param_form, this._name), this._client, {
+        AST_Param: ebd,
+        t2mdeviceusername: this._username,
+        t2mdevicepassword: this._password
+    }).then((response) => {
+        return JSON.parse(historicalToJson(response.data, false, this))
+    }).catch((err) => {
+        return err.response.data;
+    })
+}
+
 var formatEbdRoute = function (form, deviceName) {
     var route = routes.get_ebd.replace('ewon_name', deviceName);
-    console.log(route + '/' + form)
     return route + '/' + form;
 }
 
 var tagToJson = function (tagData) {
     var tags = {};
-    var commaTag = tagData.split('\n').slice(1, tagData.split('\n').length - 1);
+    var commaTag = tagData.replace(/"/g, '').split('\n').slice(1, tagData.split('\n').length - 1);
     for (var i = 0; i < commaTag.length; i++) {
         var tagEntry = commaTag[i].split(';');
-        tags[i] = {
+        tags[tagEntry[1]] = {
             tagid: tagEntry[0],
             tagname: tagEntry[1],
             tagvalue: tagEntry[2],
@@ -186,6 +224,29 @@ var tagToJson = function (tagData) {
         }
     }
     return tags;
+}
+
+var historicalToJson = function (historicalData, singleTag, ewon) {
+    var tags = {};
+    var historicalRecords = [];
+    var commaTag = historicalData.replace(/"/g, '').replace('\r', '').split('\n');
+    var tagRow = commaTag[0].split(';')
+    for (var i = 2; i < tagRow.length; i++) {
+        tags[tagRow[i].toString()] = [];
+        var historicalRecords = [];
+        for (var x = 1; x < commaTag.length - 1; x++) {
+            var row = commaTag[x].split(';');
+            var record = {
+                tagvalue: row[2],
+                time: row[0]
+            }
+            historicalRecords.push(record);
+        }
+        tags[tagRow[i]] = {
+            'historical': historicalRecords
+        }
+    }
+    return JSON.stringify(tags);
 }
 
 var request = (path, client, options) => {
