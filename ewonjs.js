@@ -11,7 +11,8 @@ var routes = {
 }
 
 var forms = {
-    param_form: 'ParamForm'
+    param_form: 'ParamForm',
+    update_tag: 'UpdateTagForm'
 }
 
 var ebds = {
@@ -65,10 +66,11 @@ EwonClient.prototype.login = function () {
         throw new Error("Login error; you cannot log in without first instantiating a client");
     }
 
-    request(routes.login, this).then((response) => {
-        return response.data.message;
+    return request(routes.login, this).then((response) => {
+        console.log(response)
+        return response.data;
     }).catch(err => {
-        return err.response.data.message;
+        return err.response.data;
     })
 }
 
@@ -81,7 +83,7 @@ EwonClient.prototype.logout = function () {
     request(routes.logout, this).then((response) => {
         return response.data.message;
     }).catch((err) => {
-        return err.response.adta.message;
+        return err.response.data.message;
     })
 }
 
@@ -94,7 +96,7 @@ EwonClient.prototype.account = function () {
     return request(routes.accountInfo, this).then((response) => {
         return response.data;
     }).catch((err) => {
-        return err.response.adta.message;
+        return err.response.data;
     })
 }
 
@@ -121,7 +123,7 @@ EwonClient.prototype.getDevice = function (deviceName) {
     return request(routes.device, this, { name: deviceName }).then((response) => {
         return response.data;
     }).catch((err) => {
-        return err;
+        return err.response.data;
     })
 }
 
@@ -135,6 +137,7 @@ EwonClient.prototype.updateSession = function (sessionId) {
     }
 
     this._sessionId = sessionId;
+    this.setState(true)
 }
 
 /**
@@ -160,6 +163,37 @@ Ewon.prototype.getLiveTags = function () {
         t2mdeviceusername: this._username,
         t2mdevicepassword: this._password
     }).then((response) => {
+        return tagToJson(response.data);
+    }).catch((err) => {
+        return err.response.data;
+    })
+}
+
+/**
+ * Update tag data
+ * @param {object} tags 
+ */
+Ewon.prototype.updateTags = function (tags) {
+    var postData = {
+        t2mdeviceusername: this._username,
+        t2mdevicepassword: this._password
+    }
+
+    if(tags instanceof JSONArray) {
+        for(var i = 0; i < tags.length; i++) {
+            var postInfo = "TagName" + (i + 1);
+            var postVal = "TagValue" + (i + 1);
+            postData[postInfo] = tags[i].tagname;
+            postData[postVal] = tags[i].tagvalue;
+        }
+    }else{
+        var postInfo = "TagName1";
+            var postVal = "TagValue1";
+            postData[postInfo] = tags.tagname;
+            postData[postVal] = tags.tagvalue;
+    }
+    
+    return request(formatEbdRoute(forms.update_tag, this._name), this._client, postData).then((response) => {
         return tagToJson(response.data);
     }).catch((err) => {
         return err.response.data;
