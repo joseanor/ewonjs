@@ -1,6 +1,7 @@
 {
   "name": "@jj11909/ewonjs",
-  "version": "1.0.1",
+  "version": "1.1.1",
+  "description": "A full-featured library for interfacing with eWON devices",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -16,6 +17,5 @@
     "mocha": "^5.1.1"
   },
   "author": "Jordan Seanor",
-  "license": "ISC",
-  "description": ""
+  "license": "ISC"
 }

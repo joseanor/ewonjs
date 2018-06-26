@@ -172,3 +172,8 @@ ewon.updateTags(tags);
 var tag = {"tagname" : "mytag", "tagvalue" : 100}
 ewon.updateTags(tag)
 ```
+
+
+## TODO:
+* Add script functionality
+* Add Data Mailbox Functionality
