@@ -1,9 +1,13 @@
 {
   "name": "@jj11909/ewonjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "directories": {
     "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jose-hms/ewonjs"
   },
   "dependencies": {
     "axios": "^0.18.0"
