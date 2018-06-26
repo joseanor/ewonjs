@@ -1,8 +1,11 @@
 {
   "name": "@jj11909/ewonjs",
-  "version": "1.3.0",
+  "version": "1.3.3",
   "description": "A full-featured library for interfacing with eWON devices",
-  "main": "index.js",
+  "keywords": [
+    "ewon", "api", "m2web", "datamailbox"
+  ],
+  "main": "ewonjs.js",
   "directories": {
     "test": "test"
   },
