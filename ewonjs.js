@@ -179,7 +179,7 @@ Ewon.prototype.updateTags = function (tags) {
         t2mdevicepassword: this._password
     }
 
-    if(tags instanceof JSONArray) {
+    if(tags.length) {
         for(var i = 0; i < tags.length; i++) {
             var postInfo = "TagName" + (i + 1);
             var postVal = "TagValue" + (i + 1);
