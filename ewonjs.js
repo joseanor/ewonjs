@@ -67,7 +67,6 @@ EwonClient.prototype.login = function () {
     }
 
     return request(routes.login, this).then((response) => {
-        console.log(response)
         return response.data;
     }).catch(err => {
         return err.response.data;

@@ -29,7 +29,7 @@ This library supports both stateful and stateless API sessions. <br>
 #### Creating a session
 
 ```javascript
-var ewon = require('jj11909/ewonjs');
+var ewon = require('@jj11909/ewonjs');
 
 var client = new ewon.EwonClient(account, username, password, developerid);
 ```
