@@ -173,6 +173,34 @@ var tag = {"tagname" : "mytag", "tagvalue" : 100}
 ewon.updateTags(tag)
 ```
 
+<br><br>
+
+### Historical Data
+If you are not using the Data Mailbox, you still have access to the historical data<br>
+stored on your unit. You can request the relative historical endpoint to retrieve <br>
+the historical data relative to a timeframe. <br><br>
+
+NOTE: This is read directly from the eWON and can easily result in increased data costs<br>
+and can take a while to parse. It is recommended to use the Data Mailbox for your historical <br>
+data. 
+
+```javascript
+var interval = 10; 
+/*
+  This requests takes in 4 parameters. 
+  A start interval and unit (seconds, hours, minutes, days)
+  An end interval and unit
+*/
+ewon.getHistoricalRelative(interval, ewon.relative_units.hours, 0, ewon.relative_units.seconds).then((response) => {
+    /*
+        By default, the data is exported from the eWON in a CSV (semicolon) however in 
+        order to make it easier to use, ewonjs will convert this data to a JSON array. 
+    */
+})
+
+```
+<br>
+
 
 ## TODO:
 * Add script functionality
