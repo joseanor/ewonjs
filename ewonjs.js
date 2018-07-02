@@ -12,7 +12,8 @@ var routes = {
 
 var forms = {
     param_form: 'ParamForm',
-    update_tag: 'UpdateTagForm'
+    update_tag: 'UpdateTagForm',
+    script_form: 'ExeScriptForm'
 }
 
 var ebds = {
@@ -234,6 +235,35 @@ Ewon.prototype.getHistoricalRelative = function (startTime, startUnits, endTime,
         return JSON.parse(historicalToJson(response.data, false, this))
     }).catch((err) => {
         return err.response.data;
+    })
+}
+
+/**
+ * Execute a BASIC script on your remote eWON device
+ * @param {array} script 
+ */
+Ewon.prototype.runBasicScript = function(script) {
+    var postData = {
+        t2mdeviceusername: this._username,
+        t2mdevicepassword: this._password
+    }
+
+    if(Array.isArray(script)) {
+        for(var i = 0; i < script.length; i++) {
+            var scriptLine = '';
+            if(typeof script[0] === 'object') {
+                scriptLine = script[i].command;
+            }else{
+                scriptLine = script[i];
+            }
+            postData["Command" + (i + 1)] = scriptLine;
+        }
+    }
+
+    return request(formatEbdRoute(forms.script_form, this._name), this._client, postData).then((response) => {
+       return JSON.parse('{"success": true}');
+    }).catch((err) => {
+        return JSON.parse('{"success": false}');
     })
 }
 

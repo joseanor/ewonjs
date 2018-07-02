@@ -199,7 +199,34 @@ ewon.getHistoricalRelative(interval, ewon.relative_units.hours, 0, ewon.relative
 })
 
 ```
-<br>
+<br><br>
+
+### Execute BASIC Script
+Executing a basic script can be done using one of two formats. Either a simple array or a JSONArray of objects can be used here. 
+
+```javascript
+
+var script = [
+    'Print "This is line one"',
+    'x = .23 * 6',
+    'PRINT STR$ x'
+]
+
+// OR
+
+var script = [
+    {'command': 'PRINT "This is line one"'},
+    {'command': 'x = .23 * 6'},
+    {'command': 'PRINT STR$ x'}
+]
+
+ewon.runBasicScript(script).then((response) => {
+    if(response.success) {
+        // Winner!
+    }
+})
+
+```
 
 
 ## TODO:

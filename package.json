@@ -1,6 +1,6 @@
 {
   "name": "@jj11909/ewonjs",
-  "version": "1.4.2",
+  "version": "1.5.0",
   "description": "A full-featured library for interfacing with eWON devices",
   "keywords": [
     "ewon", "api", "m2web", "datamailbox"
