@@ -227,8 +227,22 @@ ewon.runBasicScript(script).then((response) => {
 })
 
 ```
+<br><br>
 
+### Generic Export
+The eWON devices support dozens of exports. It is not <br> 
+possible, with my limited bandwidth, to support each and <br>
+and every function with a custom call. This can be used as <br>
+a catch-all for each export. 
 
-## TODO:
-* Add script functionality
-* Add Data Mailbox Functionality
+<b>See: [Export Block Descriptor Builder](https://ewonsupport.biz/ebd)
+
+```javascript
+
+var eventLogs = '$dtEV$ftT';
+
+ewon.genericExport(eventLogs).then((response) => {
+    // handle response
+})
+
+```

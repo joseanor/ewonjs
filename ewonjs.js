@@ -267,6 +267,28 @@ Ewon.prototype.runBasicScript = function(script) {
     })
 }
 
+/**
+ * Retrieve an arbitrary export block from the eWON. The eWON device
+ * supports dozens of exports and it is not feasible to support each 
+ * one with a custom call. 
+ * 
+ * This is a catch all. 
+ * 
+ * @see https://ewonsupport.biz/ebd
+ * @param {string} exportBlockDescriptor 
+ */
+Ewon.prototype.genericExport = function(exportBlockDescriptor) {
+    return request(formatEbdRoute(forms.param_form, this._name), this._client, {
+        AST_Param: exportBlockDescriptor,
+        t2mdeviceusername: this._username,
+        t2mdevicepassword: this._password
+    }).then((response) => {
+        return response.data;
+    }).catch((err) => {
+        return err.response.data;
+    })
+}
+
 var formatEbdRoute = function (form, deviceName) {
     var route = routes.get_ebd.replace('ewon_name', deviceName);
     return route + '/' + form;
